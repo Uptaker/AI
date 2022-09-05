@@ -27,3 +27,7 @@ function  minimax( node, depth, maximizingPlayer ) is
 _(* Initial call *)_
 minimax( origin, depth, TRUE )
 ```
+
+
+### Codecademy
+Minimax decision making course via [Codecademy](https://www.codecademy.com/learn/learn-the-basics-of-artificial-intelligence-with-minimax/modules/dspath-minimax)
