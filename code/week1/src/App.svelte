@@ -10,17 +10,24 @@
   let count = 0
   let gameLength = 7
   let state: GameState = {position: 3, label: 'x'}
+  let winner: 'PC' | 'Human'
 
-  function move() {
-    if (state.position >= gameLength) return
-    if (state.label == 'n') {
-      state.position+= 2
-      state.label = 'x'
-    } else {
-      state.position++
-      state.label = 'n'
-    }
+  $: canMove = state.position >= gameLength
+
+  const findLabel = (label: string) => (label == 'x') ? 'n' : 'x'
+
+  function movePlayer() {
+    if (state.label == 'n') state.position+= 2
+    else state.position++
+    state.label = findLabel(state.label)
     count++
+    if (!canMove) winner = 'Human'
+  }
+  function movePC() {
+    (Math.random() >= 0.5 || (state.position + 1) == gameLength) ? state.position++ : state.position+= 2
+    state.label = findLabel(state.label)
+    count++
+    if (!canMove) winner = 'PC'
   }
 
   function reset() {
@@ -30,7 +37,7 @@
 </script>
 
 <main>
-  <h1>{count}</h1>
+  <h1>{canMove ? `${winner} won!` : count}</h1>
 
   <div class="play-area">
     {#each Array(gameLength) as _, i}
@@ -38,10 +45,14 @@
     {/each}
   </div>
 
-  <button disabled={state.position >= gameLength} on:click={move}>Move</button>
+  <button disabled={canMove} on:click={movePlayer}>Move me</button>
+  <button disabled={canMove} on:click={movePC}>Move PC</button>
   <button on:click={reset}>Reset</button>
 
-  <pre>{JSON.stringify(state)}</pre>
+  <div>
+    <span>Position: <b>{state.position}</b></span>
+    <span>Label: <b>{state.label}</b></span>
+  </div>
 </main>
 
 <style>
