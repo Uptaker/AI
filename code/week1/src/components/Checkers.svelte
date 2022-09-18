@@ -14,17 +14,17 @@
         }
         return startingState
     }
-
 </script>
-<div style="width: min-content; margin: 0 auto; background-color: #BB9457">
+
+<div class="board">
     {#if state}
-        <div style="display: flex; gap: 1px;">
+        <div class="row">
             {#each state as row}
-                <div style="display: flex; flex-direction: column; gap: 1px;">
+                <div class="column">
                     {#each row as value}
-                        <div style="width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; background-color: {isX(value) ? '#99582A' : '#FFE6A7'}">
+                        <div class="square" style="background-color: {isX(value) ? '#99582A' : '#FFE6A7'}">
                             {#if value === 'X' || value === 'N'}
-                                <div style="padding: 1px;border-radius: 50%; height: 70%; width: 70% ;background-color: {isX(value) ? '#432818' : '#6F1D1B'}"></div>
+                                <div class="checker" style="background-color: {isX(value) ? '#432818' : '#BB9457'}"></div>
                             {/if}
                         </div>
                     {/each}
@@ -33,3 +33,34 @@
         </div>
     {/if}
 </div>
+
+<style>
+    .row {
+        display: flex;
+    }
+
+    .column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .checker {
+        padding: 1px;
+        border-radius: 50%;
+        height: 70%;
+        width: 70%;
+    }
+
+    .square {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .board {
+        width: min-content;
+        margin: 0 auto;
+    }
+</style>
