@@ -99,8 +99,9 @@
     }
 
     .play-area {
-        margin: 5rem 0;
+        margin: 5rem auto;
         display: flex;
+        justify-content: center;
         gap: 20px;
     }
 
