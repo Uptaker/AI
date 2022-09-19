@@ -7,6 +7,7 @@
   import Rida6 from "./components/Rida6.svelte";
   import Checkers from "./components/Checkers.svelte";
   import {SvelteComponent} from "svelte";
+  import CheckersJaagup from "./components/CheckersJaagup.svelte";
 
   let component = Checkers
 
@@ -18,6 +19,7 @@
   <button on:click={() => switchTo(TeacherSolution)}>Teacher's</button>
   <button on:click={() => switchTo(TeacherSomething)}>With buffer</button>
   <button on:click={() => switchTo(Rida6)}>Rida6</button>
+  <button on:click={() => switchTo(CheckersJaagup)}>Checkers (with string)</button>
   <button on:click={() => switchTo(Checkers)}>Checkers</button>
 </div>
 <br>
