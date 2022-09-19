@@ -16,7 +16,6 @@
 
     function leiaKaigud(seis) {
         let kes = seis[64];
-        console.log('kes', kes);
         //Kuvage käiva kasutaja nuppude asukohanumbrid
         let kohad = [];
         for (let i = 0; i < 64; i++) {
@@ -73,20 +72,17 @@
         return alamseisud
     }
 
-    function kasRuudus(koht, seis, sisu) {
-        return koht > 0 && koht < 64 && seis[koht] == sisu
-    }
-
-    function kasVaba(koht, seis) {
-        return kasRuudus(koht, seis, '.')
-    }
-
-    function asText(seis: string) {
-        let v = ''
-        for (let i = 0; i < 8; i++) {
-            v+= praeguneSeis.substring(i*8, i*8+8) + '\n'
+    function seisuHinnang(seis, tase = 0) {
+        let a = leiaKaigud(seis)
+        if (a.length == 0) return seis[64] == 'X' ? -20 : 20
+        if (tase >= 3) {
+            let m = seis.substring(0, 64).split('')
+            let xe = m.filter(s => s == 'X').length
+            let ne = m.filter(s => s == 'N').length
+            return xe - ne
         }
-        return v
+        let h = a.map(seis => seisuHinnang(seis, tase + 1))
+        return seis[64] == 'X' ? Math.max(...h) : Math.min(...h)
     }
 
     function move() {
@@ -94,10 +90,40 @@
         let m = leiaKaigud(praeguneSeis)
         if (m.length > 0) praeguneSeis = m[Math.floor(m.length * Math.random())]
         else console.log('No more turns')
+    }
 
+    // pange arvuti käima võimalikult parimat käiku
+    function best() {
+        let k = leiaKaigud(praeguneSeis)
+        if (k.length == 0) return console.log('No more turns')
+        let hinnangud = k.map(seis => seisuHinnang(seis, 0))
+        let mitmes = 0
+        let parimHinnang = praeguneSeis[64] == 'X' ? Math.max(...hinnangud) : Math.min(...hinnangud)
+        for (let i = 0; i < k.length; i++) {
+            if (hinnangud[i] == parimHinnang) mitmes = i
+        }
+        praeguneSeis = k[mitmes]
+    }
+
+
+    function kasVaba(koht, seis) {
+        return kasRuudus(koht, seis, '.')
+    }
+
+    function kasRuudus(koht, seis, sisu) {
+        return koht > 0 && koht < 64 && seis[koht] == sisu
+    }
+
+    function asText(seis: string) {
+        let v = ''
+        for (let i = 0; i < 8; i++) {
+            v+= seis.substring(i*8, i*8+8) + '\n'
+        }
+        return v
     }
 </script>
 
 <pre>{asText(praeguneSeis)}</pre>
 
 <button on:click={move}>Random</button>
+<button on:click={best}>Best</button>
