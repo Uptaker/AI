@@ -30,8 +30,8 @@
             for (let r = row - 1; r < row + 2; r++) {
                 console.log(r)
                 for (let c = column - 1; c < column + 2; c++) {
-                    if (isX(state[row][column]) && state[r][c] == 'x') swap(r, c, row, column)
-                    else if (!isX(state[row][column]) && state[r][c] == 'x') swap(r, c, row, column)
+                    if (isX(state[row][column]) && state[r][c] == 'x') return swap(r, c, row, column)
+                    else if (!isX(state[row][column]) && state[r][c] == 'x') return swap(r, c, row, column)
                 }
             }
         }
