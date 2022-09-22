@@ -40,39 +40,39 @@
 
 
 <style>
-    .row {
-        display: flex;
-        gap: 3px;
-    }
+  .row {
+    display: flex;
+    gap: 3px;
+  }
 
-    .column {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-    }
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
 
-    .state {
-        padding: 1px;
-        border-radius: 50%;
-        height: 70%;
-        width: 70%;
-    }
+  .state {
+    padding: 1px;
+    border-radius: 50%;
+    height: 70%;
+    width: 70%;
+  }
 
-    .state:hover {
-        opacity: 50%;
-    }
+  .state:hover {
+    opacity: 50%;
+  }
 
-    .square {
-        width: 150px;
-        height: 150px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: antiquewhite;
-    }
+  .square {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: antiquewhite;
+  }
 
-    .board {
-        width: min-content;
-        margin: 0 auto;
-    }
+  .board {
+    width: min-content;
+    margin: 0 auto;
+  }
 </style>

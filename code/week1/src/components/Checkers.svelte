@@ -73,36 +73,36 @@
 <button on:click={move}>Move</button>
 
 <style>
-    .row {
-        display: flex;
-    }
+  .row {
+    display: flex;
+  }
 
-    .column {
-        display: flex;
-        flex-direction: column;
-    }
+  .column {
+    display: flex;
+    flex-direction: column;
+  }
 
-    .checker {
-        padding: 1px;
-        border-radius: 50%;
-        height: 70%;
-        width: 70%;
-    }
+  .checker {
+    padding: 1px;
+    border-radius: 50%;
+    height: 70%;
+    width: 70%;
+  }
 
-    .checker:hover {
-        opacity: 50%;
-    }
+  .checker:hover {
+    opacity: 50%;
+  }
 
-    .square {
-        width: 50px;
-        height: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+  .square {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-    .board {
-        width: min-content;
-        margin: 0 auto;
-    }
+  .board {
+    width: min-content;
+    margin: 0 auto;
+  }
 </style>
