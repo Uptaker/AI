@@ -6,6 +6,7 @@
   let humanPlayer = Type.X
   let AIPlayer = Type.O
   let states: State[][]
+  let winner: Type
 
   onMount(() => {
     freshState()
@@ -14,12 +15,13 @@
 
   function freshState() {
     states = blankState()
+    winner = undefined
   }
 
   function move(row: number, column: number, turn = AIPlayer) {
     if (states[row][column] !== Type.BLANK) return
     states[row][column] = turn
-    if (checkWin(turn)) console.log(turn + ' won')
+    if (checkWin(turn)) winner = turn
   }
 
   function checkWin(who: Type) {
@@ -30,23 +32,27 @@
 
 <div class="board" style="margin-bottom: 5px">
   {#if states}
-    <div class="column">
-      {#each states as row, i}
-        <div class="row">
-          {#each row as value, j}
-            <div class="square" on:click={() => move(i, j, humanPlayer)}>
-              {#if value !== Type.BLANK}
-                <div class="state">{value}</div>
-              {/if}
-            </div>
-          {/each}
-        </div>
-      {/each}
-    </div>
+    {#if !winner}
+      <div class="column">
+        {#each states as row, i}
+          <div class="row">
+            {#each row as value, j}
+              <div class="square" on:click={() => move(i, j, humanPlayer)}>
+                {#if value !== Type.BLANK}
+                  <div class="state">{value}</div>
+                {/if}
+              </div>
+            {/each}
+          </div>
+        {/each}
+      </div>
+    {:else}
+      {winner} won
+    {/if}
   {/if}
 </div>
 
-<button on:click={freshState}>End game</button>
+<button on:click={freshState}>{winner ? 'Play again' : ' Reset'}</button>
 
 
 <style>
