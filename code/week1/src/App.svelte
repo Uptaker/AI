@@ -1,6 +1,5 @@
 <script lang="ts">
 
-  import {slide} from 'svelte/transition'
   import TeacherSolution from "./components/TeacherSolution.svelte";
   import UnfinishedSolution from "./components/UnfinishedSolution.svelte";
   import TeacherSomething from "./components/WithBuffer.svelte";
@@ -8,8 +7,9 @@
   import Checkers from "./components/Checkers.svelte";
   import {SvelteComponent} from "svelte";
   import CheckersJaagup from "./components/CheckersJaagup.svelte";
+  import TicTacToe from "./components/TicTacToe.svelte";
 
-  let component = Checkers
+  let component = TicTacToe
 
   const switchTo = (comp: SvelteComponent) => component = comp
 
@@ -21,7 +21,8 @@
   <button on:click={() => switchTo(Rida6)}>Rida6</button>
   <button on:click={() => switchTo(CheckersJaagup)}>Checkers (with string)</button>
   <button on:click={() => switchTo(Checkers)}>Checkers</button>
+  <button on:click={() => switchTo(TicTacToe)}>Tic-Tac-Toe</button>
 </div>
 <br>
 
-<svelte:component this={component}></svelte:component>
+<svelte:component this={component}/>
