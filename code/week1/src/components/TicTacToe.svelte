@@ -1,7 +1,7 @@
 <script lang="ts">
   import {onMount} from 'svelte'
   import type {State} from './TicTacToe'
-  import {blankState, Type} from './TicTacToe'
+  import {blankState, Type, winCombos} from './TicTacToe'
 
   let humanPlayer = Type.X
   let AIPlayer = Type.O
@@ -19,6 +19,11 @@
   function move(row: number, column: number, turn = AIPlayer) {
     if (states[row][column] !== Type.BLANK) return
     states[row][column] = turn
+    if (checkWin(turn)) console.log(turn + ' won')
+  }
+
+  function checkWin(who: Type) {
+    return winCombos.some(combos => combos.filter(combo => states[combo[0]][combo[1]] === who).length === 3)
   }
 
 </script>

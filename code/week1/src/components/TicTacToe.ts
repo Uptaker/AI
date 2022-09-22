@@ -15,4 +15,4 @@ export const winCombos = [
   [[2, 2], [1, 1], [0, 0]],
 ]
 
-export const blankState = () => [[Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK]]
+export const blankState = () => [[Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK]] as State[][]
