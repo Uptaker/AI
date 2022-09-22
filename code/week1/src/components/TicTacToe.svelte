@@ -19,7 +19,7 @@
   }
 
   function move(row: number, column: number, turn = AIPlayer) {
-    if (states[row][column] !== Type.BLANK) return
+    if (states[row][column] !== Type.BLANK || winningMove) return
     states[row][column] = turn
     let winningTurn = checkWin(turn)
     if (winningTurn) winningMove = winningTurn
