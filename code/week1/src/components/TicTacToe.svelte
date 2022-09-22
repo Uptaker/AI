@@ -6,14 +6,36 @@
     X = 'X', O = 'O', BLANK = ''
   }
 
+  let humanPlayer = Type.X
+  let AIPlayer = Type.O
+
+  const winCombos = [
+    [[0, 0], [0, 1], [0, 2]],
+    [[1, 0], [1, 1], [1, 2]],
+    [[2, 0], [2, 1], [2, 2]],
+    [[0, 0], [1, 0], [2, 0]],
+    [[0, 1], [1, 1], [2, 1]],
+    [[0, 2], [1, 2], [2, 2]],
+    [[0, 0], [1, 1], [2, 2]],
+    [[2, 2], [1, 1], [0, 0]],
+  ]
+
   type State = Type.X | Type.O | Type.BLANK
 
-  let states: State[][] = freshState()
+  let states: State[][]
 
-  onMount(() => console.log(states))
+  onMount(() => {
+    freshState()
+    console.log(states)
+  })
 
   function freshState() {
-    return [[Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK]]
+    states = [[Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK]]
+  }
+
+  function movePlayer(row: number, column: number) {
+    if (states[row][column] !== Type.BLANK) return
+    states[row][column] = humanPlayer
   }
 
 </script>
@@ -24,7 +46,7 @@
       {#each states as row, i}
         <div class="row">
           {#each row as value, j}
-            <div class="square">
+            <div class="square" on:click={() => movePlayer(i, j)}>
               {#if value !== Type.BLANK}
                 <div class="state">{value}</div>
               {/if}
@@ -36,7 +58,7 @@
   {/if}
 </div>
 
-<button>End game</button>
+<button on:click={freshState}>End game</button>
 
 
 <style>
@@ -53,13 +75,8 @@
 
   .state {
     padding: 1px;
-    border-radius: 50%;
-    height: 70%;
-    width: 70%;
-  }
-
-  .state:hover {
-    opacity: 50%;
+    font-size: 8rem;
+    color: black;
   }
 
   .square {
@@ -69,6 +86,10 @@
     justify-content: center;
     align-items: center;
     background-color: antiquewhite;
+  }
+
+  .square:hover {
+    opacity: 50%;
   }
 
   .board {
