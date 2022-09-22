@@ -1,39 +1,39 @@
 <script lang="ts">
 
-    import {onMount} from "svelte";
+  import {onMount} from 'svelte'
 
-    enum Type {
-        X = 'X', O = 'O', BLANK = ''
-    }
+  enum Type {
+    X = 'X', O = 'O', BLANK = ''
+  }
 
-    type State = Type.X | Type.O | Type.BLANK
+  type State = Type.X | Type.O | Type.BLANK
 
-    let states: State[][] = freshState()
+  let states: State[][] = freshState()
 
-    onMount(() => console.log(states))
+  onMount(() => console.log(states))
 
-    function freshState() {
-        return [[Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK]]
-    }
+  function freshState() {
+    return [[Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK]]
+  }
 
 </script>
 
 <div class="board" style="margin-bottom: 5px">
-    {#if states}
-        <div class="column">
-            {#each states as row, i}
-                <div class="row">
-                    {#each row as value, j}
-                        <div class="square">
-                            {#if value !== Type.BLANK}
-                                <div class="state">{value}</div>
-                            {/if}
-                        </div>
-                    {/each}
-                </div>
-            {/each}
+  {#if states}
+    <div class="column">
+      {#each states as row, i}
+        <div class="row">
+          {#each row as value, j}
+            <div class="square">
+              {#if value !== Type.BLANK}
+                <div class="state">{value}</div>
+              {/if}
+            </div>
+          {/each}
         </div>
-    {/if}
+      {/each}
+    </div>
+  {/if}
 </div>
 
 <button>End game</button>

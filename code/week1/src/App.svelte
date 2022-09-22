@@ -1,13 +1,13 @@
 <script lang="ts">
 
-  import TeacherSolution from "./components/TeacherSolution.svelte";
-  import UnfinishedSolution from "./components/UnfinishedSolution.svelte";
-  import TeacherSomething from "./components/WithBuffer.svelte";
-  import Rida6 from "./components/Rida6.svelte";
-  import Checkers from "./components/Checkers.svelte";
-  import {SvelteComponent} from "svelte";
-  import CheckersJaagup from "./components/CheckersJaagup.svelte";
-  import TicTacToe from "./components/TicTacToe.svelte";
+  import TeacherSolution from './components/TeacherSolution.svelte'
+  import UnfinishedSolution from './components/UnfinishedSolution.svelte'
+  import TeacherSomething from './components/WithBuffer.svelte'
+  import Rida6 from './components/Rida6.svelte'
+  import Checkers from './components/Checkers.svelte'
+  import {SvelteComponent} from 'svelte'
+  import CheckersJaagup from './components/CheckersJaagup.svelte'
+  import TicTacToe from './components/TicTacToe.svelte'
 
   let component = TicTacToe
 
