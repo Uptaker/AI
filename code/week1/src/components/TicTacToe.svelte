@@ -1,27 +1,10 @@
 <script lang="ts">
-
   import {onMount} from 'svelte'
-
-  enum Type {
-    X = 'X', O = 'O', BLANK = ''
-  }
+  import type {State} from './TicTacToe'
+  import {blankState, Type} from './TicTacToe'
 
   let humanPlayer = Type.X
   let AIPlayer = Type.O
-
-  const winCombos = [
-    [[0, 0], [0, 1], [0, 2]],
-    [[1, 0], [1, 1], [1, 2]],
-    [[2, 0], [2, 1], [2, 2]],
-    [[0, 0], [1, 0], [2, 0]],
-    [[0, 1], [1, 1], [2, 1]],
-    [[0, 2], [1, 2], [2, 2]],
-    [[0, 0], [1, 1], [2, 2]],
-    [[2, 2], [1, 1], [0, 0]],
-  ]
-
-  type State = Type.X | Type.O | Type.BLANK
-
   let states: State[][]
 
   onMount(() => {
@@ -30,12 +13,12 @@
   })
 
   function freshState() {
-    states = [[Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK]]
+    states = blankState()
   }
 
-  function movePlayer(row: number, column: number) {
+  function move(row: number, column: number, turn = AIPlayer) {
     if (states[row][column] !== Type.BLANK) return
-    states[row][column] = humanPlayer
+    states[row][column] = turn
   }
 
 </script>
@@ -46,7 +29,7 @@
       {#each states as row, i}
         <div class="row">
           {#each row as value, j}
-            <div class="square" on:click={() => movePlayer(i, j)}>
+            <div class="square" on:click={() => move(i, j, humanPlayer)}>
               {#if value !== Type.BLANK}
                 <div class="state">{value}</div>
               {/if}
