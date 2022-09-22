@@ -2,7 +2,11 @@ export enum Type {
   X = 'X', O = 'O', BLANK = ''
 }
 
-export type State = Type.X | Type.O | Type.BLANK
+export interface Position {
+  row: number,
+  column: number,
+  type?: Type
+}
 
 export const winCombos = [
   [[0, 0], [0, 1], [0, 2]],
@@ -15,4 +19,10 @@ export const winCombos = [
   [[2, 0], [1, 1], [0, 2]]
 ]
 
-export const blankState = () => [[Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK], [Type.BLANK, Type.BLANK, Type.BLANK]] as State[][]
+export function getBlankState() {
+  let state = [[], [], []] as Position[][]
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) state[i].push({row: i, column: j, type: Type.BLANK})
+  }
+  return state
+}

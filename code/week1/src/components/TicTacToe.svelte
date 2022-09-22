@@ -1,45 +1,62 @@
 <script lang="ts">
   import {onMount} from 'svelte'
-  import type {State} from './TicTacToe'
-  import {blankState, Type, winCombos} from './TicTacToe'
+  import type {Position} from './TicTacToe'
+  import {getBlankState, Type, winCombos} from './TicTacToe'
 
   let humanPlayer = Type.X
   let AIPlayer = Type.O
-  let states: State[][]
+  let states: Position[][]
   let winningMove: number[][]
 
   onMount(() => freshState())
 
   function freshState() {
-    states = blankState()
+    states = getBlankState()
     winningMove = undefined
   }
 
-  function move(row: number, column: number, turn = AIPlayer) {
-    if (states[row][column] !== Type.BLANK || winningMove) return
-    states[row][column] = turn
+  function move(pos: Position, turn = AIPlayer) {
+    if (states[pos.row][pos.column].type !== Type.BLANK || winningMove) return
+    states[pos.row][pos.column].type = turn
     let winningTurn = checkWin(turn)
     if (winningTurn) winningMove = winningTurn
-  }
+    if (turn === humanPlayer && !winningTurn && !checkTie()) {
+      const bestPosition = bestSpot()
+      console.log(bestPosition)
+      move(bestPosition, AIPlayer)
+      }
+    }
 
   function checkWin(who: Type) {
-    return winCombos.find(combos => combos.filter(combo => states[combo[0]][combo[1]] === who).length === 3)
+    return winCombos.find(combos => combos.filter(combo => states[combo[0]][combo[1]].type === who).length === 3)
+  }
+
+  function bestSpot() {
+    return emptyPositions()[0]
+  }
+
+  function emptyPositions(): Position[] {
+    return [].concat.apply([], states).filter(pos => pos.type === Type.BLANK)
+  }
+
+  function checkTie() {
+
   }
 
 </script>
 
 <div class="board" style="margin-bottom: 5px">
   {#if winningMove}
-    <h2>{states[winningMove[0][0]][winningMove[0][1]]} won</h2>
+    <h2>{states[winningMove[0][0]][winningMove[0][1]].type} won</h2>
   {/if}
   {#if states}
     <div class="column">
       {#each states as row, i}
         <div class="row">
           {#each row as value, j}
-            <div class="square" on:click={() => move(i, j, humanPlayer)} class:winning={winningMove?.find(turn => turn[0] === i && turn[1] === j)}>
-              {#if value !== Type.BLANK}
-                <div class="state">{value}</div>
+            <div class="square" on:click={() => move({row: i, column: j}, humanPlayer)} class:winning={winningMove?.find(turn => turn[0] === i && turn[1] === j)}>
+              {#if value.type !== Type.BLANK}
+                <div class="state">{value.type}</div>
               {/if}
             </div>
           {/each}
