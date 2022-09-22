@@ -8,10 +8,7 @@
   let states: State[][]
   let winningMove: number[][]
 
-  onMount(() => {
-    freshState()
-    console.log(states)
-  })
+  onMount(() => freshState())
 
   function freshState() {
     states = blankState()
@@ -23,7 +20,6 @@
     states[row][column] = turn
     let winningTurn = checkWin(turn)
     if (winningTurn) winningMove = winningTurn
-    console.log(winningMove)
   }
 
   function checkWin(who: Type) {
