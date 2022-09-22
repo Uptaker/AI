@@ -6,7 +6,7 @@
   let humanPlayer = Type.X
   let AIPlayer = Type.O
   let states: State[][]
-  let winner: Type
+  let winningMove: number[][]
 
   onMount(() => {
     freshState()
@@ -15,50 +15,55 @@
 
   function freshState() {
     states = blankState()
-    winner = undefined
+    winningMove = undefined
   }
 
   function move(row: number, column: number, turn = AIPlayer) {
     if (states[row][column] !== Type.BLANK) return
     states[row][column] = turn
-    if (checkWin(turn)) winner = turn
+    let winningTurn = checkWin(turn)
+    if (winningTurn) winningMove = winningTurn
+    console.log(winningMove)
   }
 
   function checkWin(who: Type) {
-    return winCombos.some(combos => combos.filter(combo => states[combo[0]][combo[1]] === who).length === 3)
+    return winCombos.find(combos => combos.filter(combo => states[combo[0]][combo[1]] === who).length === 3)
   }
 
 </script>
 
 <div class="board" style="margin-bottom: 5px">
+  {#if winningMove}
+    <h2>{states[winningMove[0][0]][winningMove[0][1]]} won</h2>
+  {/if}
   {#if states}
-    {#if !winner}
-      <div class="column">
-        {#each states as row, i}
-          <div class="row">
-            {#each row as value, j}
-              <div class="square" on:click={() => move(i, j, humanPlayer)}>
-                {#if value !== Type.BLANK}
-                  <div class="state">{value}</div>
-                {/if}
-              </div>
-            {/each}
-          </div>
-        {/each}
-      </div>
-    {:else}
-      {winner} won
-    {/if}
+    <div class="column">
+      {#each states as row, i}
+        <div class="row">
+          {#each row as value, j}
+            <div class="square" on:click={() => move(i, j, humanPlayer)} class:winning={winningMove?.find(turn => turn[0] === i && turn[1] === j)}>
+              {#if value !== Type.BLANK}
+                <div class="state">{value}</div>
+              {/if}
+            </div>
+          {/each}
+        </div>
+      {/each}
+    </div>
   {/if}
 </div>
 
-<button on:click={freshState}>{winner ? 'Play again' : ' Reset'}</button>
+<button on:click={freshState}>{winningMove ? 'Play again' : ' Reset'}</button>
 
 
 <style>
   .row {
     display: flex;
     gap: 3px;
+  }
+
+  .winning {
+    background-color: darkseagreen !important;
   }
 
   .column {
@@ -80,6 +85,7 @@
     justify-content: center;
     align-items: center;
     background-color: antiquewhite;
+    transition: opacity 0.3s ease-out;
   }
 
   .square:hover {
