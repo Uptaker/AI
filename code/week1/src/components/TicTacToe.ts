@@ -5,7 +5,8 @@ export enum Type {
 export interface Position {
   row: number,
   column: number,
-  type?: Type
+  type?: Type,
+  score?: number
 }
 
 export const winCombos = [

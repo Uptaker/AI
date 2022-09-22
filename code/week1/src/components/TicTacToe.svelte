@@ -28,19 +28,52 @@
       }
     }
 
-  function checkWin(who: Type) {
-    return winCombos.find(combos => combos.filter(combo => states[combo[0]][combo[1]].type === who).length === 3)
+  function checkWin(who: Type, board = states): number[][] {
+    return winCombos.find(combos => combos.filter(combo => board[combo[0]][combo[1]].type === who).length === 3)
   }
 
-  function bestSpot() {
-    return emptyPositions()[0]
+  function bestSpot(): Position {
+    // return emptyPositions()[0]
+    return miniMax(states, AIPlayer)
+  }
+
+  function miniMax(board: Position[][], player: Type): Position {
+    const emptyPositions = emptyPositions()
+
+    if (checkWin(humanPlayer, board)) return {score: -10}
+    else if (checkWin(AIPlayer, board)) return {score: 10}
+    else if (emptyPositions.length === 0) return {score: 0}
+
+    let moves = []
+    for (let i = 0; i < emptyPositions.length; i++) {
+      let move = {row: board[emptyPositions[i].row][emptyPositions[i].column]} as Position
+      board[emptyPositions[i].row][emptyPositions[i].column].type = humanPlayer
+      if (player === AIPlayer) {
+        const result = miniMax(board, humanPlayer)
+        move.score = result.score
+      } else {
+        const result = miniMax(board, AIPlayer)
+        move.score = result.score
+      }
+
+      // might be wrong
+      board[emptyPositions[i].row][emptyPositions[i].column] = {...move}
+      moves.push(move)
+
+      const bestMove
+      if (player === AIPlayer) {
+        let bestScore = -1000
+        for (let i = 0; i < moves.length; i++)
+          // 43:44
+      }
+    }
   }
 
   function emptyPositions(): Position[] {
     return [].concat.apply([], states).filter(pos => pos.type === Type.BLANK)
   }
 
-  function checkTie() {
+  function checkTie(): Boolean {
     return emptyPositions().length === 0
   }
 
