@@ -1,4 +1,5 @@
 <script lang="ts">
+  import {slide} from 'svelte/transition'
   import {onMount} from 'svelte'
   import type {Position} from './TicTacToe'
   import {getBlankState, Type, winCombos} from './TicTacToe'
@@ -45,26 +46,32 @@
 
 </script>
 
-<div class="board" style="margin-bottom: 5px">
-  {#if winningMove}
-    <h2>{states[winningMove[0][0]][winningMove[0][1]].type} won</h2>
-  {/if}
-  {#if states}
-    <div class="column">
-      {#each states as row, i}
-        <div class="row">
-          {#each row as value, j}
-            <div class="square" on:click={() => move({row: i, column: j}, humanPlayer)} class:winning={winningMove?.find(turn => turn[0] === i && turn[1] === j)}>
-              {#if value.type !== Type.BLANK}
-                <div class="state">{value.type}</div>
-              {/if}
-            </div>
-          {/each}
-        </div>
-      {/each}
-    </div>
-  {/if}
-</div>
+<div class="container" style="margin-bottom: 5px">
+
+  <div class="board" >
+
+    {#if winningMove}
+      <h2 transition:slide>{states[winningMove[0][0]][winningMove[0][1]].type} won</h2>
+    {/if}
+    {#if states}
+      <div class="column">
+        {#each states as row, i}
+          <div class="row">
+            {#each row as value, j}
+              <div class="square" on:click={() => move({row: i, column: j}, humanPlayer)} class:winning={winningMove?.find(turn => turn[0] === i && turn[1] === j)}>
+                {#if value.type !== Type.BLANK}
+                  <div class="state">{value.type}</div>
+                {/if}
+              </div>
+            {/each}
+          </div>
+        {/each}
+      </div>
+    {/if}
+
+  </div>
+
+  </div>
 
 <button on:click={freshState}>{winningMove ? 'Play again' : ' Reset'}</button>
 
@@ -105,8 +112,12 @@
     opacity: 50%;
   }
 
+  .container {
+    display: flex;
+    justify-content: center;
+  }
+
   .board {
-    width: min-content;
-    margin: 0 auto;
+    background-color: sandybrown;
   }
 </style>
