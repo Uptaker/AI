@@ -40,7 +40,7 @@
   }
 
   function checkTie() {
-
+    return emptyPositions().length === 0
   }
 
 </script>
