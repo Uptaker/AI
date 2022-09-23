@@ -6,7 +6,6 @@ export enum AiMode {
   DUMB, MINIMAX
 }
 
-
 export interface Position {
   row: number,
   column: number,

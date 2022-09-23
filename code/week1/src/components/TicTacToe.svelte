@@ -5,9 +5,10 @@
 
   let humanPlayer = Type.X
   let AIPlayer = Type.O
+
+  let AIMode = AiMode.MINIMAX
   let state: Position[][]
   let status: Status = {tie: false}
-  let AIMode = AiMode.MINIMAX
 
   $: if (humanPlayer) {
     AIPlayer = humanPlayer === Type.X ? Type.O : Type.X
@@ -93,11 +94,10 @@
     }
     return moves[bestMove]
   }
-
 </script>
 
 <div class="container" style="margin-bottom: 5px">
-  <div class="board" >
+  <div class="board">
 
     {#if status?.winner?.length}
       <h2 transition:slide>{status.winner[0].type} won</h2>
@@ -130,13 +130,13 @@
 <button on:click={freshState}>{status.winner?.length ? 'Play again' : ' Reset'}</button>
 
 <div class="container" style="gap: 5rem">
+
   <div class="container text-right" style="flex-direction: column">
     <h3>Play as</h3>
     <div>
       <label for="x">X</label>
       <input type="radio" id="x" value={Type.X} bind:group={humanPlayer}/>
     </div>
-
     <div>
       <label for="o">O</label>
       <input type="radio" id="o" value={Type.O} bind:group={humanPlayer}/>
@@ -149,7 +149,6 @@
       <label for="dum">Dumb</label>
       <input type="radio" id="dum" value={AiMode.DUMB} bind:group={AIMode}/>
     </div>
-
     <div>
       <label for="minimax">Minimax</label>
       <input type="radio" id="minimax" value={AiMode.MINIMAX} bind:group={AIMode}/>
