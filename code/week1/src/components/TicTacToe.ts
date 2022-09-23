@@ -21,6 +21,10 @@ export interface Status {
 
 export const deepCopy = (input: Record<string, unknown>) => JSON.parse(JSON.stringify(input))
 
+export function flatten<T>(arr: T[][]): T[] {
+  return [].concat.apply([], arr)
+}
+
 export const winCombos = [
   [[0, 0], [0, 1], [0, 2]],
   [[1, 0], [1, 1], [1, 2]],

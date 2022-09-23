@@ -1,16 +1,13 @@
 <script lang="ts">
   import {slide} from 'svelte/transition'
-  import {onMount} from 'svelte'
   import type {Position, Status} from './TicTacToe'
-  import {AiMode, deepCopy, getBlankState, Type, winCombos} from './TicTacToe'
+  import {AiMode, deepCopy, flatten, getBlankState, Type, winCombos} from './TicTacToe'
 
   let humanPlayer = Type.X
   let AIPlayer = Type.O
   let state: Position[][]
   let status: Status = {tie: false}
   let AIMode = AiMode.MINIMAX
-
-  onMount(() => freshState())
 
   $: if (humanPlayer) {
     AIPlayer = humanPlayer === Type.X ? Type.O : Type.X
@@ -23,12 +20,16 @@
     if (AIPlayer === Type.X) move(bestSpot(), AIPlayer)
   }
 
-  function move(pos: Position, turn = AIPlayer) {
-    if (state[pos.row][pos.column].type !== Type.BLANK || status?.winner || status.tie) return
-    state[pos.row][pos.column].type = turn
-    status.winner = checkWin(turn)
-    status.tie = checkTie()
-    if (turn === humanPlayer && !status?.winner && !status.tie) move(bestSpot(), AIPlayer)
+  function bestSpot(): Position {
+    return AIMode === AiMode.DUMB ? emptyPositions()[0] : miniMax(state, AIPlayer) as Position
+  }
+
+  function emptyPositions(board = state): Position[] {
+    return flatten(board).filter(pos => pos.type === Type.BLANK)
+  }
+
+  function checkTie(positions = emptyPositions()): Boolean {
+    return positions.length === 0
   }
 
   function checkWin(who: Type, board = state): Position[] | undefined {
@@ -36,12 +37,12 @@
     return turns.length ? turns : undefined
   }
 
-  function bestSpot(): Position {
-    return AIMode === AiMode.DUMB ? emptyPositions()[0] : miniMax(state, AIPlayer) as Position
-  }
-
-  function flatten<T>(arr: T[][]): T[] {
-    return [].concat.apply([], arr)
+  function move(pos: Position, turn = AIPlayer) {
+    if (state[pos.row][pos.column].type !== Type.BLANK || status?.winner || status.tie) return
+    state[pos.row][pos.column].type = turn
+    status.winner = checkWin(turn)
+    status.tie = checkTie()
+    if (turn === humanPlayer && !status?.winner && !status.tie) move(bestSpot(), AIPlayer)
   }
 
   function miniMax(board: Position[][], player: Type): Position | {score: number} {
@@ -51,8 +52,7 @@
     // check for terminal states (win or tie)
     if (checkWin(humanPlayer, newBoard)) return {score: -10}
     else if (checkWin(AIPlayer, newBoard)) return {score: 10}
-    else if (availablePositions.length === 0) return {score: 0}
-
+    else if (checkTie(availablePositions)) return {score: 0}
 
     // collect the scores for each empty spot to evaluate later
     let moves: Position[] = []
@@ -94,19 +94,11 @@
     return moves[bestMove]
   }
 
-  function emptyPositions(board = state): Position[] {
-    return flatten(board).filter(pos => pos.type === Type.BLANK)
-  }
-
-  function checkTie(): Boolean {
-    return emptyPositions().length === 0
-  }
-
 </script>
 
 <div class="container" style="margin-bottom: 5px">
-
   <div class="board" >
+
     {#if status?.winner?.length}
       <h2 transition:slide>{status.winner[0].type} won</h2>
     {:else if status.tie}
@@ -133,7 +125,6 @@
     {/if}
 
   </div>
-
 </div>
 
 <button on:click={freshState}>{status.winner?.length ? 'Play again' : ' Reset'}</button>
