@@ -2,11 +2,21 @@ export enum Type {
   X = 'X', O = 'O', BLANK = ''
 }
 
+export enum AiMode {
+  DUMB, MINIMAX
+}
+
+
 export interface Position {
   row: number,
   column: number,
   type?: Type,
   score?: number
+}
+
+export interface Status {
+  tie: boolean
+  winner?: Position[]
 }
 
 export const deepCopy = (input: Record<string, unknown>) => JSON.parse(JSON.stringify(input))

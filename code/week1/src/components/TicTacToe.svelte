@@ -1,24 +1,26 @@
 <script lang="ts">
   import {slide} from 'svelte/transition'
   import {onMount} from 'svelte'
-  import type {Position} from './TicTacToe'
-  import {deepCopy, getBlankState, Type, winCombos} from './TicTacToe'
-
-  interface Status {
-    tie: boolean
-    winner?: number[][]
-  }
+  import type {Position, Status} from './TicTacToe'
+  import {AiMode, deepCopy, getBlankState, Type, winCombos} from './TicTacToe'
 
   let humanPlayer = Type.X
   let AIPlayer = Type.O
   let state: Position[][]
   let status: Status = {tie: false}
+  let AIMode = AiMode.MINIMAX
 
   onMount(() => freshState())
+
+  $: if (humanPlayer) {
+    AIPlayer = humanPlayer === Type.X ? Type.O : Type.X
+    freshState()
+  }
 
   function freshState() {
     state = getBlankState()
     status = {tie: false}
+    if (AIPlayer === Type.X) move(bestSpot(), AIPlayer)
   }
 
   function move(pos: Position, turn = AIPlayer) {
@@ -26,19 +28,20 @@
     state[pos.row][pos.column].type = turn
     status.winner = checkWin(turn)
     status.tie = checkTie()
-    if (turn === humanPlayer && !status?.winner && !status.tie) {
-      const bestPosition = bestSpot()
-      move(bestPosition, AIPlayer)
-      }
-    }
+    if (turn === humanPlayer && !status?.winner && !status.tie) move(bestSpot(), AIPlayer)
+  }
 
-  function checkWin(who: Type, board = state): number[][] {
-    return winCombos.find(combos => combos.filter(combo => board[combo[0]][combo[1]].type === who).length === 3)
+  function checkWin(who: Type, board = state): Position[] | undefined {
+    const turns = flatten(board).filter(pos => winCombos.find(combos => combos.filter(combo => board[combo[0]][combo[1]].type === who).length === 3)?.find(c => c[0] === pos.row && c[1] === pos.column))
+    return turns.length ? turns : undefined
   }
 
   function bestSpot(): Position {
-    // return emptyPositions()[0]
-    return miniMax(state, AIPlayer) as Position
+    return AIMode === AiMode.DUMB ? emptyPositions()[0] : miniMax(state, AIPlayer) as Position
+  }
+
+  function flatten<T>(arr: T[][]): T[] {
+    return [].concat.apply([], arr)
   }
 
   function miniMax(board: Position[][], player: Type): Position | {score: number} {
@@ -92,7 +95,7 @@
   }
 
   function emptyPositions(board = state): Position[] {
-    return [].concat.apply([], board).filter(pos => pos.type === Type.BLANK)
+    return flatten(board).filter(pos => pos.type === Type.BLANK)
   }
 
   function checkTie(): Boolean {
@@ -104,8 +107,8 @@
 <div class="container" style="margin-bottom: 5px">
 
   <div class="board" >
-    {#if status?.winner}
-      <h2 transition:slide>{state[status.winner[0][0]][status.winner[0][1]].type} won</h2>
+    {#if status?.winner?.length}
+      <h2 transition:slide>{status.winner[0].type} won</h2>
     {:else if status.tie}
       <h2 transition:slide>Tie</h2>
     {/if}
@@ -114,10 +117,14 @@
         {#each state as row, i}
           <div class="row">
             {#each row as value, j}
-              <div class="square" on:click={() => move({row: i, column: j}, humanPlayer)} class:winning={status?.winner?.find(turn => turn[0] === i && turn[1] === j)}>
+              {@const win = status.winner?.find(s => s.row === i && s.column === j)}
+              <div class="square {!win ? '' : win.type === humanPlayer ? 'won' : 'lost'}"
+               on:click={() => move({row: i, column: j}, humanPlayer)}>
+
                 {#if value.type !== Type.BLANK}
                   <div class="state">{value.type}</div>
                 {/if}
+
               </div>
             {/each}
           </div>
@@ -127,10 +134,38 @@
 
   </div>
 
+</div>
+
+<button on:click={freshState}>{status.winner?.length ? 'Play again' : ' Reset'}</button>
+
+<div class="container" style="gap: 5rem">
+  <div class="container text-right" style="flex-direction: column">
+    <h3>Play as</h3>
+    <div>
+      <label for="x">X</label>
+      <input type="radio" id="x" value={Type.X} bind:group={humanPlayer}/>
+    </div>
+
+    <div>
+      <label for="o">O</label>
+      <input type="radio" id="o" value={Type.O} bind:group={humanPlayer}/>
+    </div>
   </div>
 
-<button on:click={freshState}>{status ? 'Play again' : ' Reset'}</button>
+  <div class="container text-right" style="flex-direction: column">
+    <h3>AI Mode</h3>
+    <div>
+      <label for="dum">Dumb</label>
+      <input type="radio" id="dum" value={AiMode.DUMB} bind:group={AIMode}/>
+    </div>
 
+    <div>
+      <label for="minimax">Minimax</label>
+      <input type="radio" id="minimax" value={AiMode.MINIMAX} bind:group={AIMode}/>
+    </div>
+  </div>
+
+</div>
 
 <style>
   .row {
@@ -138,8 +173,12 @@
     gap: 3px;
   }
 
-  .winning {
-    background-color: darkseagreen !important;
+  .won {
+    background-color: #cfe5cf !important;
+  }
+
+  .lost {
+    background-color: #f8d7cd !important;
   }
 
   .column {
@@ -151,7 +190,7 @@
   .state {
     padding: 1px;
     font-size: 8rem;
-    color: black;
+    color: sandybrown;
   }
 
   .square {
