@@ -9,6 +9,8 @@ export interface Position {
   score?: number
 }
 
+export const deepCopy = (input: Record<string, unknown>) => JSON.parse(JSON.stringify(input))
+
 export const winCombos = [
   [[0, 0], [0, 1], [0, 2]],
   [[1, 0], [1, 1], [1, 2]],

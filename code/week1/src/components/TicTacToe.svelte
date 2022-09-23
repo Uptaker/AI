@@ -2,7 +2,7 @@
   import {slide} from 'svelte/transition'
   import {onMount} from 'svelte'
   import type {Position} from './TicTacToe'
-  import {getBlankState, Type, winCombos} from './TicTacToe'
+  import {deepCopy, getBlankState, Type, winCombos} from './TicTacToe'
 
   let humanPlayer = Type.X
   let AIPlayer = Type.O
@@ -23,7 +23,6 @@
     if (winningTurn) winningMove = winningTurn
     if (turn === humanPlayer && !winningTurn && !checkTie()) {
       const bestPosition = bestSpot()
-      console.log(bestPosition)
       move(bestPosition, AIPlayer)
       }
     }
@@ -34,43 +33,63 @@
 
   function bestSpot(): Position {
     // return emptyPositions()[0]
-    return miniMax(states, AIPlayer)
+    return miniMax(states, AIPlayer) as Position
   }
 
-  function miniMax(board: Position[][], player: Type): Position {
-    const emptyPositions = emptyPositions()
+  function miniMax(board: Position[][], player: Type): Position | {score: number} {
+    const newBoard = deepCopy(board)
+    const availablePositions = emptyPositions(newBoard)
 
-    if (checkWin(humanPlayer, board)) return {score: -10}
-    else if (checkWin(AIPlayer, board)) return {score: 10}
-    else if (emptyPositions.length === 0) return {score: 0}
+    // check for terminal states (win or tie)
+    if (checkWin(humanPlayer, newBoard)) return {score: -10}
+    else if (checkWin(AIPlayer, newBoard)) return {score: 10}
+    else if (availablePositions.length === 0) return {score: 0}
 
-    let moves = []
-    for (let i = 0; i < emptyPositions.length; i++) {
-      let move = {row: board[emptyPositions[i].row][emptyPositions[i].column]} as Position
-      board[emptyPositions[i].row][emptyPositions[i].column].type = humanPlayer
-      if (player === AIPlayer) {
-        const result = miniMax(board, humanPlayer)
-        move.score = result.score
-      } else {
-        const result = miniMax(board, AIPlayer)
-        move.score = result.score
-      }
+
+    // collect the scores for each empty spot to evaluate later
+    let moves: Position[] = []
+    for (let i = 0; i < availablePositions.length; i++) {
+      const { row, column } = newBoard[availablePositions[i].row][availablePositions[i].column]
+      let move: Position = {column: newBoard[row][column].column, row: newBoard[row][column].row}
+      newBoard[availablePositions[i].row][availablePositions[i].column].type = player
+
+      // if no terminal state, keep recursively going deeper
+      if (player === AIPlayer) move.score = miniMax(newBoard, humanPlayer).score
+      else move.score = miniMax(newBoard, AIPlayer).score
 
       // might be wrong
-      board[emptyPositions[i].row][emptyPositions[i].column] = {...move}
+      // reset board to what it was before, push result to array
+      newBoard[availablePositions[i].row][availablePositions[i].column] = move
       moves.push(move)
+    }
+    console.log(moves)
 
-      const bestMove
-      if (player === AIPlayer) {
-        let bestScore = -1000
-        for (let i = 0; i < moves.length; i++)
-          // 43:44
+    // evaluate the best move
+    // lowest when human playing
+    // highest score when AI playing
+    let bestMove
+    if (player === AIPlayer) {
+      let bestScore = -Infinity
+      for (let i = 0; i < moves.length; i++) {
+        if (moves[i].score > bestScore) {
+          bestScore = moves[i].score
+          bestMove = i
+        }
+      }
+    } else {
+      let bestScore = Infinity
+      for (let i = 0; i < moves.length; i++) {
+        if (moves[i].score < bestScore) {
+          bestScore = moves[i].score
+          bestMove = i
+        }
       }
     }
+    return moves[bestMove]
   }
 
-  function emptyPositions(): Position[] {
-    return [].concat.apply([], states).filter(pos => pos.type === Type.BLANK)
+  function emptyPositions(board = states): Position[] {
+    return [].concat.apply([], board).filter(pos => pos.type === Type.BLANK)
   }
 
   function checkTie(): Boolean {
