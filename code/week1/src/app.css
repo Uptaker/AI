@@ -38,6 +38,14 @@ h1 {
   text-align: center;
 }
 
+.w-full {
+  width: 100%;
+}
+
+.text-right {
+  text-align: right;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid rgba(211, 211, 211, 0.31);
@@ -47,9 +55,11 @@ button {
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.25s;
+  color: #99582A;
+  background-color: #FFE6A7
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #99582A;
 }
 button:focus,
 button:focus-visible {
