@@ -23,6 +23,4 @@
   <button on:click={() => switchTo(Checkers)}>Checkers</button>
   <button on:click={() => switchTo(TicTacToe)}>Tic-Tac-Toe</button>
 </div>
-<br>
-
 <svelte:component this={component}/>
