@@ -4,36 +4,41 @@
   import type {Position} from './TicTacToe'
   import {deepCopy, getBlankState, Type, winCombos} from './TicTacToe'
 
+  interface Status {
+    tie: boolean
+    winner?: number[][]
+  }
+
   let humanPlayer = Type.X
   let AIPlayer = Type.O
-  let states: Position[][]
-  let winningMove: number[][]
+  let state: Position[][]
+  let status: Status = {tie: false}
 
   onMount(() => freshState())
 
   function freshState() {
-    states = getBlankState()
-    winningMove = undefined
+    state = getBlankState()
+    status = {tie: false}
   }
 
   function move(pos: Position, turn = AIPlayer) {
-    if (states[pos.row][pos.column].type !== Type.BLANK || winningMove) return
-    states[pos.row][pos.column].type = turn
-    let winningTurn = checkWin(turn)
-    if (winningTurn) winningMove = winningTurn
-    if (turn === humanPlayer && !winningTurn && !checkTie()) {
+    if (state[pos.row][pos.column].type !== Type.BLANK || status?.winner || status.tie) return
+    state[pos.row][pos.column].type = turn
+    status.winner = checkWin(turn)
+    status.tie = checkTie()
+    if (turn === humanPlayer && !status?.winner && !status.tie) {
       const bestPosition = bestSpot()
       move(bestPosition, AIPlayer)
       }
     }
 
-  function checkWin(who: Type, board = states): number[][] {
+  function checkWin(who: Type, board = state): number[][] {
     return winCombos.find(combos => combos.filter(combo => board[combo[0]][combo[1]].type === who).length === 3)
   }
 
   function bestSpot(): Position {
     // return emptyPositions()[0]
-    return miniMax(states, AIPlayer) as Position
+    return miniMax(state, AIPlayer) as Position
   }
 
   function miniMax(board: Position[][], player: Type): Position | {score: number} {
@@ -57,12 +62,10 @@
       if (player === AIPlayer) move.score = miniMax(newBoard, humanPlayer).score
       else move.score = miniMax(newBoard, AIPlayer).score
 
-      // might be wrong
       // reset board to what it was before, push result to array
       newBoard[availablePositions[i].row][availablePositions[i].column] = move
       moves.push(move)
     }
-    console.log(moves)
 
     // evaluate the best move
     // lowest when human playing
@@ -88,7 +91,7 @@
     return moves[bestMove]
   }
 
-  function emptyPositions(board = states): Position[] {
+  function emptyPositions(board = state): Position[] {
     return [].concat.apply([], board).filter(pos => pos.type === Type.BLANK)
   }
 
@@ -101,16 +104,17 @@
 <div class="container" style="margin-bottom: 5px">
 
   <div class="board" >
-
-    {#if winningMove}
-      <h2 transition:slide>{states[winningMove[0][0]][winningMove[0][1]].type} won</h2>
+    {#if status?.winner}
+      <h2 transition:slide>{state[status.winner[0][0]][status.winner[0][1]].type} won</h2>
+    {:else if status.tie}
+      <h2 transition:slide>Tie</h2>
     {/if}
-    {#if states}
+    {#if state}
       <div class="column">
-        {#each states as row, i}
+        {#each state as row, i}
           <div class="row">
             {#each row as value, j}
-              <div class="square" on:click={() => move({row: i, column: j}, humanPlayer)} class:winning={winningMove?.find(turn => turn[0] === i && turn[1] === j)}>
+              <div class="square" on:click={() => move({row: i, column: j}, humanPlayer)} class:winning={status?.winner?.find(turn => turn[0] === i && turn[1] === j)}>
                 {#if value.type !== Type.BLANK}
                   <div class="state">{value.type}</div>
                 {/if}
@@ -125,7 +129,7 @@
 
   </div>
 
-<button on:click={freshState}>{winningMove ? 'Play again' : ' Reset'}</button>
+<button on:click={freshState}>{status ? 'Play again' : ' Reset'}</button>
 
 
 <style>
