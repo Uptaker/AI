@@ -19,12 +19,6 @@ export interface Status {
   winner?: Position[]
 }
 
-export const deepCopy = (input: Record<string, unknown>) => JSON.parse(JSON.stringify(input))
-
-export function flatten<T>(arr: T[][]): T[] {
-  return [].concat.apply([], arr)
-}
-
 export const winCombos = [
   [[0, 0], [0, 1], [0, 2]],
   [[1, 0], [1, 1], [1, 2]],
@@ -42,4 +36,12 @@ export function getBlankState() {
     for (let j = 0; j < 3; j++) state[i].push({row: i, column: j, type: Type.BLANK})
   }
   return state
+}
+
+export function deepCopy<T>(input: T): T {
+  return JSON.parse(JSON.stringify(input))
+}
+
+export function flatten<T>(arr: T[][]): T[] {
+  return [].concat.apply([], arr)
 }
