@@ -7,7 +7,7 @@
   let AIPlayer = Type.O
 
   let AIMode = AiMode.MINIMAX
-  let state: Position[][]
+  let boardState: Position[][]
   let status: Status = {tie: false}
 
   $: if (humanPlayer) {
@@ -16,31 +16,31 @@
   }
 
   function freshState() {
-    state = getBlankState()
+    boardState = getBlankState()
     status = {tie: false}
     if (AIPlayer === Type.X) move(bestSpot(), AIPlayer)
   }
 
   function bestSpot(): Position {
-    return AIMode === AiMode.DUMB ? emptyPositions()[0] : miniMax(state, AIPlayer) as Position
+    return AIMode === AiMode.DUMB ? emptyPositions()[0] : miniMax(boardState, AIPlayer) as Position
   }
 
-  function emptyPositions(board = state): Position[] {
-    return flatten(board).filter(pos => pos.type === Type.BLANK)
+  function emptyPositions(board = boardState): Position[] {
+    return flatten(board).filter(pos => pos.type !== Type.X && pos.type !== Type.O)
   }
 
   function checkTie(positions = emptyPositions()): Boolean {
     return positions.length === 0
   }
 
-  function checkWin(who: Type, board = state): Position[] | undefined {
+  function checkWin(who: Type, board = boardState): Position[] | undefined {
     const turns = flatten(board).filter(pos => winCombos.find(combos => combos.filter(combo => board[combo[0]][combo[1]].type === who).length === 3)?.find(c => c[0] === pos.row && c[1] === pos.column))
     return turns.length ? turns : undefined
   }
 
   function move(pos: Position, turn = AIPlayer) {
-    if (state[pos.row][pos.column].type !== Type.BLANK || status?.winner || status.tie) return
-    state[pos.row][pos.column].type = turn
+    if (boardState[pos.row][pos.column].type !== Type.BLANK || status?.winner || status.tie) return
+    boardState[pos.row][pos.column].type = turn
     status.winner = checkWin(turn)
     status.tie = checkTie()
     if (turn === humanPlayer && !status?.winner && !status.tie) move(bestSpot(), AIPlayer)
@@ -59,40 +59,41 @@
     let moves: Position[] = []
     for (let i = 0; i < availablePositions.length; i++) {
       const { row, column } = newBoard[availablePositions[i].row][availablePositions[i].column]
-      let move: Position = {column: newBoard[row][column].column, row: newBoard[row][column].row}
-      newBoard[availablePositions[i].row][availablePositions[i].column].type = player
+      let move: Position = {column, row}
+      newBoard[row][column].type = player
 
       // if no terminal state, keep recursively going deeper
       if (player === AIPlayer) move.score = miniMax(newBoard, humanPlayer).score
       else move.score = miniMax(newBoard, AIPlayer).score
 
       // reset board to what it was before, push result to array
-      newBoard[availablePositions[i].row][availablePositions[i].column] = move
+      newBoard[row][column] = move
       moves.push(move)
     }
 
     // evaluate the best move
-    // lowest when human playing
-    // highest score when AI playing
-    let bestMove
+    let bestMove: Position
     if (player === AIPlayer) {
+      // highest score when AI playing
       let bestScore = -Infinity
       for (let i = 0; i < moves.length; i++) {
         if (moves[i].score > bestScore) {
           bestScore = moves[i].score
-          bestMove = i
+          bestMove = moves[i]
         }
       }
     } else {
+      // lowest when human playing
       let bestScore = Infinity
       for (let i = 0; i < moves.length; i++) {
         if (moves[i].score < bestScore) {
           bestScore = moves[i].score
-          bestMove = i
+          bestMove = moves[i]
         }
       }
     }
-    return moves[bestMove]
+
+    return bestMove
   }
 </script>
 
@@ -104,9 +105,9 @@
     {:else if status.tie}
       <h2 transition:slide>Tie</h2>
     {/if}
-    {#if state}
+    {#if boardState}
       <div class="column">
-        {#each state as row, i}
+        {#each boardState as row, i}
           <div class="row">
             {#each row as value, j}
               {@const win = status.winner?.find(s => s.row === i && s.column === j)}
