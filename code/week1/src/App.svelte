@@ -8,6 +8,7 @@
   import {SvelteComponent} from 'svelte'
   import CheckersJaagup from './components/CheckersJaagup.svelte'
   import TicTacToe from './components/TicTacToe.svelte'
+  import Ruudustik from "./components/Ruudustik.svelte";
 
   let component = TicTacToe
 
@@ -22,5 +23,6 @@
   <button on:click={() => switchTo(CheckersJaagup)}>Checkers (with string)</button>
   <button on:click={() => switchTo(Checkers)}>Checkers</button>
   <button on:click={() => switchTo(TicTacToe)}>Tic-Tac-Toe</button>
+  <button on:click={() => switchTo(Ruudustik)}>Ruudustik</button>
 </div>
 <svelte:component this={component}/>
