@@ -1,17 +1,19 @@
 <script lang="ts">
-  import {onMount} from 'svelte'
 
   enum Type {
     TILE = 'T', EDGE = 'E', HORIZONTAL = 'X', UP ='Y', VERTICAL = 'Z', FINISH = 'F'
   }
 
-  enum Direction {
-    UP, DOWN, LEFT, RIGHT, ANY
-  }
-
   interface Position {
     row: number,
     column: number
+  }
+
+  interface Tile {
+    type: Type,
+    wayX?: Position
+    wayY?: Position
+    wayZ?: Position
   }
 
   function findPlayerPosition(): Position {
@@ -23,12 +25,7 @@
     return {row, column}
   }
 
-  interface Tile {
-    type: Type,
-    wayX: Direction
-    wayY: Direction
-    wayZ: Direction
-  }
+
 
   let player
   const stateAsStrings: string[] = [
@@ -90,7 +87,7 @@
     strings.forEach(r => {
       const row = []
       const column = r.split("")
-      column.forEach(c => row.push({type: c, wayX: Direction.ANY, wayY: Direction.ANY, wayZ: Direction.ANY} as Tile))
+      column.forEach(c => row.push({type: c} as Tile))
       startingState.push(row)
     })
     return startingState
