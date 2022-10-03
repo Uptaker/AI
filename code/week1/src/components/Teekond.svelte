@@ -4,7 +4,7 @@
     let kp = 8;
     let vastus: string
     let praeguneSeis =
-        ("XXXXXXXX" +
+            ("XXXXXXXX" +
             "X.X....X" +
             "XXX..F.X" +
             "XXX.XXXX" +
@@ -75,7 +75,6 @@
                 praeguneSeis[nr] = '.'
             }
         }
-
         vastus = (praeguneSeis[loppkoht] == ".") ? "Ei" : "Jah";
     }
 
