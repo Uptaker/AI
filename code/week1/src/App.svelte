@@ -8,9 +8,9 @@
   import {SvelteComponent} from 'svelte'
   import CheckersJaagup from './components/CheckersJaagup.svelte'
   import TicTacToe from './components/TicTacToe.svelte'
-  import Ruudustik from "./components/Ruudustik.svelte";
+  import Teekond from "./components/Teekond.svelte";
 
-  let component = TicTacToe
+  let component = Teekond
 
   const switchTo = (comp: SvelteComponent) => component = comp
 
@@ -23,6 +23,6 @@
   <button on:click={() => switchTo(CheckersJaagup)}>Checkers (with string)</button>
   <button on:click={() => switchTo(Checkers)}>Checkers</button>
   <button on:click={() => switchTo(TicTacToe)}>Tic-Tac-Toe</button>
-  <button on:click={() => switchTo(Ruudustik)}>Ruudustik</button>
+  <button on:click={() => switchTo(Teekond)}>Teekond</button>
 </div>
 <svelte:component this={component}/>
