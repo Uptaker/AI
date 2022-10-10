@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<!-- saved from url=(0108)http://minitorn.tlu.ee/~jaagup/kool/java/kursused/22/intelligentsed_systeemid/esmaspaev/1010/ruudustik7.html -->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Ruudustik</title>
+    <script>
+        let kp = 8;
+        let praeguneSeis =
+            ("XXXXXXXX" +
+                "X.X...FX" +
+                "XXX....X" +
+                "XXX.XXXX" +
+                "X......X" +
+                "X..XX..X" +
+                "XS.....X" +
+                "XXXXXXXX").split("");
+        let algkoht, loppkoht, frida, fveerg;
+
+        function loe() {
+            fetch("ruudustik.txt").then(d => d.text()).then(function (t) {
+                let m = t.split("\n").map(rida => rida.trim());
+                kp = m[0].length;
+                lubatudSammud = [-1, 1, -kp, kp];
+                console.log(kp);
+                praeguneSeis = m.join("").split("");
+                kuva();
+                uuri();
+            });
+        }
+
+        function kuva() {
+            let v = "";
+            //console.log(praeguneSeis);
+            let kSeis = praeguneSeis.join("");
+            for (let i = 0; i < kp; i++) {
+                v += kSeis.substring(i * kp, i * kp + kp) + "<br />"
+            }
+//		 console.log(v);
+            laud.innerHTML = v;
+        }
+
+        let lubatudSammud = [-1, 1, -kp, kp];
+
+        function leiaVabad(koht) {
+            let v = [];
+            lubatudSammud.forEach(function (samm) {
+                if (praeguneSeis[koht + samm] === ".") {
+                    v.push(koht + samm);
+                }
+            });
+            return v;
+        }
+
+        function kaugusF(nr) {
+            let rrida = parseInt(nr / kp);
+            let rveerg = nr % kp;
+            let drida = rrida - frida;
+            let dveerg = rveerg - fveerg;
+            return Math.sqrt(drida * drida + dveerg * dveerg);
+        }
+
+        function uuri() {
+            algkoht = praeguneSeis.indexOf("S");
+            loppkoht = praeguneSeis.indexOf("F");
+            frida = parseInt(loppkoht / kp);
+            fveerg = loppkoht % kp;
+            praeguneSeis[loppkoht] = ".";
+            let hallid = [algkoht];
+            console.log(kaugusF(algkoht));
+            let loendur = 0, otsib = true;
+            //Pange teele ette mõned takistused, jälgige otsingut
+            while (hallid.length > 0 && loendur++ < 100 && otsib) {
+                //Püüdke loobuda sort-funktsioonist
+                hallid.sort((a, b) => kaugusF(a) - kaugusF(b));
+                console.log(hallid);
+                let uuritav = hallid.shift(); //eemaldab esimese elemendi muutujasse
+                let vabad = leiaVabad(uuritav);
+                vabad.forEach(function (koht) {
+                    let vahe = koht - uuritav;
+                    let symbol = "?";
+                    if (vahe === -1) {
+                        symbol = "p"
+                    }
+                    if (vahe === 1) {
+                        symbol = "v"
+                    }
+                    if (vahe === -kp) {
+                        symbol = "a"
+                    }
+                    if (vahe === kp) {
+                        symbol = "y"
+                    }
+                    praeguneSeis[koht] = symbol;
+                    kuva();
+                    //Selle asemel lisage uus koht kasvava kauguse järgi
+                    hallid.push(koht);
+                    if (koht === loppkoht) {
+                        otsib = false;
+                    }
+                });
+                kuva();
+            }
+            let arvud = {"v": -1, "p": 1, "a": kp, "y": -kp};
+            if (praeguneSeis[loppkoht] !== ".") {
+                let koht = loppkoht;
+                while (koht !== algkoht) {
+                    let symbol = praeguneSeis[koht];
+                    let uusKoht = koht + arvud[symbol];
+                    praeguneSeis[koht] = "o";
+                    koht = uusKoht;
+                }
+                praeguneSeis[koht] = "o";
+            }
+            for (let nr = 0; nr < kp * kp; nr++) {
+                if (praeguneSeis[nr] in arvud) {
+                    // praeguneSeis[nr]=".";
+                }
+            }
+            kuva();
+            vastus.innerHTML = (praeguneSeis[loppkoht] === ".") ? "Ei" : "Jah";
+        }
+
+        function algus() {
+            loe();
+        }
+    </script>
+</head>
+<body onload="algus()">
+<pre id="laud">***************<br>*.............*<br>*...........oa*<br>*..........poo*<br>*...........po*<br>*...........po*<br>*...........po*<br>*.....a******o*<br>*....aoooooo*o*<br>*...aoovyyyooo*<br>*..aoov....yyy*<br>*.aoov........*<br>*poov.........*<br>*.yy..........*<br>***************<br></pre>
+<div id="vastus">Jah</div>
+
+</body>
+</html>
