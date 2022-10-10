@@ -76,25 +76,29 @@
                 console.log(hallid);
                 let uuritav = hallid.shift(); //eemaldab esimese elemendi muutujasse
                 let vabad = leiaVabad(uuritav);
-                vabad.forEach(function (koht) {
+                vabad.forEach(koht => {
                     let vahe = koht - uuritav;
                     let symbol = "?";
-                    if (vahe === -1) {
-                        symbol = "p"
-                    }
-                    if (vahe === 1) {
-                        symbol = "v"
-                    }
-                    if (vahe === -kp) {
-                        symbol = "a"
-                    }
-                    if (vahe === kp) {
-                        symbol = "y"
-                    }
+                    if (vahe === -1) symbol = "p"
+                    if (vahe === 1) symbol = "v"
+                    if (vahe === -kp) symbol = "a"
+                    if (vahe === kp) symbol = "y"
                     praeguneSeis[koht] = symbol;
                     kuva();
                     //Selle asemel lisage uus koht kasvava kauguse järgi
-                    hallid.push(koht);
+                    console.log('koht', koht)
+                    // hallid.push(koht);
+                    let nr = 0
+                    let lisada = true
+                    while (lisada && nr < hallid.length) {
+                        if (kaugusF(koht) < kaugusF(hallid[nr])) {
+                            hallid.splice(nr, 0, koht)
+                            lisada = false
+                        }
+                        nr++
+                    }
+
+                    if (lisada) hallid.push(koht)
                     if (koht === loppkoht) {
                         otsib = false;
                     }

@@ -10,8 +10,11 @@
   import TicTacToe from './components/TicTacToe.svelte'
   import Teekond from "./components/Teekond.svelte";
   import Bloxors from "./components/Bloxors.svelte";
+  import DepthSearch from "./components/DepthSearch.svelte";
+  import DepthSearchFixed from "./components/DepthSearchFixed.svelte";
+  import DepthSearchNoRecursion from "./components/DepthSearchNoRecursion.svelte";
 
-  let component = Bloxors
+  let component = DepthSearchNoRecursion
 
   const switchTo = (comp: SvelteComponent) => component = comp
 
@@ -26,5 +29,9 @@
   <button on:click={() => switchTo(TicTacToe)}>Tic-Tac-Toe</button>
   <button on:click={() => switchTo(Teekond)}>Teekond</button>
   <button on:click={() => switchTo(Bloxors)}>Bloxorz</button>
+  <button on:click={() => switchTo(DepthSearch)}>Depth Search (cant allow cycles)</button>
+  <button on:click={() => switchTo(DepthSearchFixed)}>Depth Search (fixed)</button>
+  <button on:click={() => switchTo(DepthSearchNoRecursion)}>Depth Search (no recursion)</button>
+
 </div>
 <svelte:component this={component}/>
